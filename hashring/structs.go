@@ -1,5 +1,7 @@
 package hashring
 
+import "sync"
+
 type typeHashFn string
 
 const (
@@ -12,14 +14,25 @@ const (
 type Ring struct {
 	replicas int
 	hashFunc typeHashFn
-	nodes    map[string][]uint32 // physical node -> virtual nodes
-	hashRing []uint32
+	nodes    map[string][]vNode
+	hashRing []vNode
+
+	sync.RWMutex
+}
+
+// vNode is the struct for virtual node.
+type vNode struct {
+	hash uint32
+	node string
 }
 
 type RingOption func(*Ring)
 
 func NewRing(opts ...RingOption) *Ring {
 	r := new(Ring)
+	r.Lock()
+	defer r.Unlock()
+	r.nodes = make(map[string][]vNode)
 	for _, opt := range opts {
 		opt(r)
 	}
