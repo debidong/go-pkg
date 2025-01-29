@@ -1,8 +1,10 @@
 package hashring
 
 import (
+	"crypto/md5"
 	"fmt"
 	"go-pkg/utils"
+	"math/big"
 	"sort"
 
 	"github.com/spaolacci/murmur3"
@@ -14,10 +16,20 @@ func murmur3Hash(str string) uint32 {
 	return murmur3.Sum32([]byte(str)) // always be in range of [0, 2^32 - 1]
 }
 
+func md5Hash(str string) uint32 {
+	hash := md5.Sum([]byte(str))
+	// convert hash to integer
+	hashInt := big.NewInt(0).SetBytes(hash[:])
+	hashInt.Mod(hashInt, big.NewInt(modulo))
+	return uint32(hashInt.Int64())
+}
+
 func (r *Ring) hasher() hashFunc {
 	switch r.hashFunc {
 	case TypeHashFnMurmur3:
 		return murmur3Hash
+	case TypeHashFnMd5:
+		return md5Hash
 	default:
 		return murmur3Hash
 	}
