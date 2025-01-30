@@ -36,8 +36,8 @@ func (r *Ring) hasher() hashFunc {
 }
 
 func (r *Ring) AddNode(node string) error {
-	r.Lock()
-	defer r.Unlock()
+	r.mu.Lock()
+	defer r.mu.Unlock()
 
 	if _, ok := r.nodes[node]; ok {
 		return utils.NewError("node already exists", "AddNode")
@@ -55,8 +55,8 @@ func (r *Ring) AddNode(node string) error {
 }
 
 func (r *Ring) RemoveNode(node string) error {
-	r.Lock()
-	defer r.Unlock()
+	r.mu.Lock()
+	defer r.mu.Unlock()
 
 	if _, ok := r.nodes[node]; !ok {
 		return utils.NewError("node not found", "RemoveNode")
@@ -67,8 +67,8 @@ func (r *Ring) RemoveNode(node string) error {
 }
 
 func (r *Ring) GetNodeByKey(key string) (string, error) {
-	r.RLock()
-	defer r.RUnlock()
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 
 	if len(r.hashRing) == 0 {
 		return "", utils.NewError("no nodes in hash ring", "GetNodeByKey")
