@@ -20,7 +20,7 @@ type Ring struct {
 	nodes    map[string][]vNode
 	hashRing []vNode
 
-	sync.RWMutex
+	mu sync.RWMutex
 }
 
 // vNode is the struct for virtual node.
@@ -33,8 +33,8 @@ type RingOption func(*Ring)
 
 func NewRing(opts ...RingOption) *Ring {
 	r := new(Ring)
-	r.Lock()
-	defer r.Unlock()
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	// default
 	r.nodes = make(map[string][]vNode)
 	r.replicas = DefaultReplicas
