@@ -11,5 +11,5 @@ func WrapError(err error, functionName string) error {
 }
 
 func ChainError(errNew error, errChained error) error {
-	return fmt.Errorf("%w\n%w", errChained, errNew)
+	return fmt.Errorf("%w\n%w", errNew, errChained)
 }

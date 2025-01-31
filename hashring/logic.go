@@ -3,10 +3,10 @@ package hashring
 import (
 	"crypto/md5"
 	"fmt"
-	"go-pkg/utils"
 	"math/big"
 	"sort"
 
+	"github.com/debidong/go-pkg/utils"
 	"github.com/spaolacci/murmur3"
 )
 
